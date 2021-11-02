@@ -1,3 +1,5 @@
+Nazwisko: Patryk Wojtanowski
+
 # A 3D graphics programming project.
 
 This repository contains the "Hello World!" equivalent for OpenGL C++ programming.  This will be the starting point for your assignments. 
