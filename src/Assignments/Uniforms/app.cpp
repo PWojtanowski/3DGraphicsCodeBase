@@ -7,6 +7,8 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
+#include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
 
 #include "Application/utils.h"
 
@@ -34,8 +36,15 @@ void SimpleShapeApplication::init()
         -0.5f, -0.5f, 0.0f,  0.0f,  1.0f, 0.0f, // 3
          0.5f, -0.5f, 0.0f,  0.0f,  1.0f, 0.0f}; // 4
 
-    GLfloat strength = 1.0;
-    GLfloat color[3] = {1.0,1.0,1.0};
+    GLfloat strength = 0.5;
+    GLfloat color[3] = {0.1,1.0,1.0};
+
+    float theta = -1.0*glm::pi<float>()/6.0f;
+    auto cs = std::cos(theta);
+    auto ss = std::sin(theta);  
+    glm::mat2 rot{cs,ss,-ss,cs};
+    glm::vec2 trans{0.25,  -0.25};
+    glm::vec2 scale{0.5, 0.5};
 
     // Generating the buffer and loading the vertex data into it.
     GLuint v_buffer_handle;
@@ -57,8 +66,18 @@ void SimpleShapeApplication::init()
     glBindBufferBase(GL_UNIFORM_BUFFER,0,c_buffer_handle);
 
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GLfloat), &strength);
-    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(GLfloat), 3*sizeof(GLfloat), color);
-    
+    glBufferSubData(GL_UNIFORM_BUFFER, 4*sizeof(GLfloat), 3*sizeof(GLfloat), color);
+
+    GLuint t_buffer_handle;
+    glGenBuffers(1, &t_buffer_handle);
+    OGL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, t_buffer_handle));
+    glBufferData(GL_UNIFORM_BUFFER, 6 * sizeof(glm::vec2), nullptr, GL_STATIC_DRAW);
+    glBindBufferBase(GL_UNIFORM_BUFFER,1,t_buffer_handle);
+
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::vec2), &scale);
+    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::vec2), sizeof(glm::vec2), &trans);
+    glBufferSubData(GL_UNIFORM_BUFFER, 2*sizeof(glm::vec2), sizeof(glm::vec2), &rot[0]);
+    glBufferSubData(GL_UNIFORM_BUFFER, 4*sizeof(glm::vec2), sizeof(glm::vec2), &rot[1]);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     // This setups a Vertex Array Object (VAO) that  encapsulates
@@ -67,6 +86,7 @@ void SimpleShapeApplication::init()
     glBindVertexArray(vao_);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, i_buffer_handle);
     glBindBuffer(GL_ARRAY_BUFFER, v_buffer_handle);
+    glBindBuffer(GL_UNIFORM_BUFFER, c_buffer_handle);
 
     // This indicates that the data for attribute 0 should be read from a vertex buffer.
     glEnableVertexAttribArray(0);
