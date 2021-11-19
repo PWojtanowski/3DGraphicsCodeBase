@@ -32,7 +32,7 @@ V_ = glm::lookAt(...)
 i zmieniamy kod  odpowiednio, tak żeby używał tylko pól `P_` i `V_`.
 
 
-Ponieważ teraz macierz projekcji `P_` może zmieniać się od klatki do klatki kod  obliczający i przesyłający macierz PVM do szadera poprzez bufor uniform musimy przenieść do metody `frame`. W tym celu zmienną zawierającą nazwę bufora uniform odpowiedzialnego za przesyłanie macierzy `PVM` do szadera musimy też uczynić polem klasy dodając w pliku `app.h` w części `private`  deklaracji klasy `SimpleShapeApplication` np. deklarację:
+Ponieważ teraz macierz projekcji `P_` może zmieniać się od klatki do klatki kod  obliczający i przesyłający macierz PVM do szadera poprzez bufor uniform musimy przenieść do metody `frame`. W tym celu zmienną zawierającą nazwę bufora uniform odpowiedzialnego za przesyłanie macierzy `PVM` do szadera musimy też uczynić polem klasy dodając w pliku `app.h` w części `private`  dekla  racji klasy `SimpleShapeApplication` np. deklarację:
 ```
 GLuint u_pvm_buffer_; 
 ```   

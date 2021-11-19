@@ -55,6 +55,10 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "cinttypes": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "charconv": "cpp",
+        "ios": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp"
     }
 }
