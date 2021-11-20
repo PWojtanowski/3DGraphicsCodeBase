@@ -127,11 +127,11 @@ void SimpleShapeApplication::init()
     near_ = 0.1f;
     far_ = 100.0f;
 
-    camera.look_at(glm::vec3(0.0f, 0.0f, -5.0f),
+    camera_.look_at(glm::vec3(0.0f, 0.0f, -5.0f),
                         glm::vec3(0.0f, 0.0f, 0.0f),
                         glm::vec3(0.0f, 1.0f, 0.0f));
     
-    camera.perspective(fov_, aspect_, near_, far_);
+    camera_.perspective(fov_, aspect_, near_, far_);
 
     glViewport(0, 0, w, h);
 
@@ -144,31 +144,25 @@ void SimpleShapeApplication::init()
 //This functions is called every frame and does the actual rendering.
 void SimpleShapeApplication::frame()
 {
-     static auto time = std::chrono::steady_clock::now();
-     auto time_n = std::chrono::steady_clock::now();
-     std::chrono::duration<double> elapsed = time_n - time;
-     time = time_n;
+    //  static auto time = std::chrono::steady_clock::now();
+    //  auto time_n = std::chrono::steady_clock::now();
+    //  std::chrono::duration<double> elapsed = time_n - time;
+    //  time = time_n;
     //std::cout<<(1.0f/elapsed.count())<<std::endl;
     
-    static float rotation_angle = 0.0f;
-    rotation_angle += elapsed.count();
+    // static float rotation_angle = 0.0f;
+    // rotation_angle += elapsed.count();
 
-    auto [w, h] = frame_buffer_size();
+    // auto [w, h] = frame_buffer_size();
 
     glm::mat4 model(1.0f);   
-    model = glm::rotate(model, rotation_angle, glm::vec3(1.0f,0.0f,1.0f));
-    //glm::mat4 trans = P_ * V_ * model;
-    glm::mat4 trans = camera.projection() * camera.view() * model;
+    //model = glm::rotate(model, rotation_angle, glm::vec3(1.0f,0.0f,1.0f));
+    glm::mat4 trans = camera_.projection() * camera_.view() * model;
 
     glBindBuffer(GL_UNIFORM_BUFFER, t_buffer_handle);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &trans);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    /* 
-        na learnopengl:
-        glGetUniformLocation
-        glUniformX
-    */
+    
     glBindVertexArray(vao_);
     glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
     glBindVertexArray(0);
@@ -178,10 +172,33 @@ void SimpleShapeApplication::framebuffer_resize_callback(int w, int h) {
     Application::framebuffer_resize_callback(w, h);
     glViewport(0,0,w,h); 
     aspect_ = (float) w / h;
-    camera.perspective(fov_, aspect_, near_, far_);
+    camera_.perspective(fov_, aspect_, near_, far_);
 }
 
 void SimpleShapeApplication::scroll_callback(double xoffset, double yoffset){
     Application::scroll_callback(xoffset, yoffset);   
-    camera.zoom(-yoffset / 30.0f);
+    camera_.zoom(-yoffset / 30.0f);
+}
+
+void SimpleShapeApplication::mouse_button_callback(int button, int action, int mods) {
+    Application::mouse_button_callback(button, action, mods);
+
+    //if (controler_) {
+        double x, y;
+        glfwGetCursorPos(window_, &x, &y);
+
+        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+            controler_.LMB_pressed(x, y);
+
+        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+            controler_.LMB_released(x, y);
+    //}
+
+}
+
+void SimpleShapeApplication::cursor_position_callback(double x, double y) {
+    Application::cursor_position_callback(x, y);
+    //if (controler_) {
+        controler_.mouse_moved(x, y);
+    //}
 }
