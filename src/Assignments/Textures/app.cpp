@@ -13,22 +13,63 @@
 
 #include "Application/utils.h"
 
+#define STB_IMAGE_IMPLEMENTATION  1
+
+#include "3rdParty/stb/stb_image.h"
+
+#include "Engine/mesh_loader.h"
+
 void SimpleShapeApplication::init()
 {
-    std::vector<GLushort> indices = {3,1,0,
-                                    2,3,0,
-                                    0,4,2,
-                                    0,1,4,
-                                    1,3,4,
-                                    3,2,4};
+    stbi_set_flip_vertically_on_load(true);
+    GLint width, height, channels;
+    auto texture_file = std::string(ROOT_DIR) + "/Models/multicolor.png";
+    auto img = stbi_load(texture_file.c_str(), &width, &height, &channels, 0);
+    if (!img) {
+        //spdlog::warn("Could not read image from file `{}'", texture_file);
+        std::cout<<("Could not read image from file "+texture_file)<<std::endl;
+    }
+    std::cout<<width<< " " <<height<<" "<<channels<<std::endl;
+    
+    GLuint texture = 0;
+    glGenTextures(1, &texture);
+    std::cout<<"texture: "<<texture<<std::endl;
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+  	width,
+  	height,
+  	0,
+  	GL_RGB,
+    GL_UNSIGNED_BYTE,
+  	img);
+    glBindTexture(GL_TEXTURE_2D,0);
+
+    
+
+    xe::ColorMaterial::init();
+
+    std::vector<GLushort> indices = {0,2,3,
+                                    0,3,1,
+                                    2,0,4,
+                                    0,1,5,
+                                    1,3,6,
+                                    3,2,7};
 
     // A vector containing the x,y,z vertex coordinates for the triangle.
     std::vector<GLfloat> vertices = {
-        -1.0f,-1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        0.0f, 1.0f, 0.0f
+        -1.0f,-1.0f, 1.0f, 0.191f, 0.500f,//0 
+        1.0f,-1.0f, 1.0f,  0.500f, 0.809f,//1
+        -1.0f,-1.0f,-1.0f, 0.500f, 0.191f,//2
+        1.0f,-1.0f,-1.0f,  0.809f, 0.500f,//3
+        0.0f, 1.0f, 0.0f,  0.0f, 0.0f, //4 GÓRA
+        0.0f, 1.0f, 0.0f,  0.0f, 1.0f,//5 GÓRA
+        0.0f, 1.0f, 0.0f,  1.0f, 1.0f, //6 GÓRA
+        0.0f, 1.0f, 0.0f,  1.0f, 0.0f //7 GÓRA
         };
 
     GLfloat strength = 1.0;
@@ -50,18 +91,22 @@ void SimpleShapeApplication::init()
     // This setups an OpenGL vieport of the size of the whole rendering window.
    
     auto pyramid = new xe::Mesh(); 
+    auto material = new xe::ColorMaterial(glm::vec4(1.0f,1.0f,1.0f,1.0f));
+    material->set_texture(texture);
     
     pyramid->allocate_vertex_buffer(vertices.size() * sizeof(GLfloat),  GL_STATIC_DRAW);
     pyramid->load_vertices(0, vertices.size() * sizeof(GLfloat), vertices.data());
-    pyramid->vertex_attrib_pointer(0, 3, GL_FLOAT, 3 * sizeof(GLfloat), 0 );
-    
+    pyramid->vertex_attrib_pointer(0, 3, GL_FLOAT, 5 * sizeof(GLfloat), 0 );
+    pyramid->vertex_attrib_pointer(1, 2, GL_FLOAT, 5 * sizeof(GLfloat), 3*sizeof(GLfloat) );
+
     pyramid->allocate_index_buffer(indices.size() * sizeof(GLfloat), GL_STATIC_DRAW);
     pyramid->load_indices(0, indices.size() * sizeof(GLfloat), indices.data());
-    pyramid->add_submesh(0,6, new xe::ColorMaterial(glm::vec4(1.0f,0.0f,0.0f,1.0f)));
-    pyramid->add_submesh(6,9, new xe::ColorMaterial(glm::vec4(0.0f,1.0f,0.0f,1.0f)));
-    pyramid->add_submesh(9,12, new xe::ColorMaterial(glm::vec4(0.0f,0.0f,1.0f,1.0f)));
-    pyramid->add_submesh(12,15, new xe::ColorMaterial(glm::vec4(1.0f,0.0f,1.0f,1.0f)));
-    pyramid->add_submesh(15,18, new xe::ColorMaterial(glm::vec4(1.0f,1.0f,0.0f,1.0f)));
+    pyramid->add_submesh(0,18, material);
+    
+    pyramid = xe::load_mesh_from_obj(std::string(ROOT_DIR) + "/Models/blue_marble.obj",
+                                          std::string(ROOT_DIR) + "/Models");
+    
+    
     add_submesh(pyramid);
 
     int w, h;
@@ -81,12 +126,13 @@ void SimpleShapeApplication::init()
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+
+    
 }
 
 //This functions is called every frame and does the actual rendering.
 void SimpleShapeApplication::frame()
 {
-    xe::ColorMaterial::init();
     //  static auto time = std::chrono::steady_clock::now();
     //  auto time_n = std::chrono::steady_clock::now();
     //  std::chrono::duration<double> elapsed = time_n - time;

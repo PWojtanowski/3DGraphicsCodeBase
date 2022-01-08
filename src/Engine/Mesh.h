@@ -24,6 +24,11 @@ namespace xe {
     public:
         Mesh();
 
+        void *map_vertex_buffer();
+        void unmap_vertex_buffer();
+        void *map_index_buffer();
+        void unmap_index_buffer();
+
         void allocate_vertex_buffer(size_t size, GLenum hint);
 
         void allocate_index_buffer(size_t size, GLenum hint);
