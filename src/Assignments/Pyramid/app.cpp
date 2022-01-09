@@ -139,10 +139,10 @@ void SimpleShapeApplication::frame()
      auto time_n = std::chrono::steady_clock::now();
      std::chrono::duration<double> elapsed = time_n - time;
      time = time_n;
-    std::cout<<(1.0f/elapsed.count())<<std::endl;
+    //std::cout<<(1.0f/elapsed.count())<<std::endl;
     
     static float rotation_angle = 0.0f;
-    rotation_angle += elapsed.count();
+    //rotation_angle += elapsed.count();
 
     auto [w, h] = frame_buffer_size();
 

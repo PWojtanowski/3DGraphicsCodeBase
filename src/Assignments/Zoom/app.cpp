@@ -151,7 +151,7 @@ void SimpleShapeApplication::frame()
     //std::cout<<(1.0f/elapsed.count())<<std::endl;
     
     static float rotation_angle = 0.0f;
-    rotation_angle += elapsed.count();
+    //rotation_angle += elapsed.count();
 
     auto [w, h] = frame_buffer_size();
 

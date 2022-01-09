@@ -26,18 +26,20 @@ void SimpleShapeApplication::init()
         exit(-1);
     }
 
-    std::vector<GLushort> indices = {0,1,2,1,0,3,3,4,0};
+    std::vector<GLushort> indices = {0,1,2,3,4,5,5,6,3};
 
     // A vector containing the x,y,z vertex coordinates for the triangle.
     std::vector<GLfloat> vertices = {
          0.5f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f, // 0
-        -0.5f,  0.0f, 0.0f,  0.0f,  0.0f, 1.0f, // 1
+        -0.5f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f, // 1
          0.0f,  0.5f, 0.0f,  1.0f,  0.0f, 0.0f, // 2
-        -0.5f, -0.5f, 0.0f,  0.0f,  1.0f, 0.0f, // 3
-         0.5f, -0.5f, 0.0f,  0.0f,  1.0f, 0.0f}; // 4
+         0.5f,  0.0f, 0.0f,  0.0f,  1.0f, 0.0f, // 3
+        -0.5f,  0.0f, 0.0f,  0.0f,  1.0f, 0.0f, // 4
+        -0.5f, -0.5f, 0.0f,  0.0f,  1.0f, 0.0f, // 5
+         0.5f, -0.5f, 0.0f,  0.0f,  1.0f, 0.0f}; // 6
 
-    GLfloat strength = 0.5;
-    GLfloat color[3] = {0.1,1.0,1.0};
+    GLfloat strength = 1.0;
+    GLfloat color[3] = {1.0,1.0,1.0};
 
     float theta = -1.0*glm::pi<float>()/6.0f;
     auto cs = std::cos(theta);

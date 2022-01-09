@@ -27,18 +27,20 @@ void SimpleShapeApplication::init()
         exit(-1);
     }
 
-    std::vector<GLushort> indices = {0,1,2,1,0,3,3,4,0};
+    std::vector<GLushort> indices = {0,1,2,3,4,5,5,6,3};
 
     // A vector containing the x,y,z vertex coordinates for the triangle.
     std::vector<GLfloat> vertices = {
          0.5f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f, // 0
-        -0.5f,  0.0f, 0.0f,  0.0f,  0.0f, 1.0f, // 1
+        -0.5f,  0.0f, 0.0f,  1.0f,  0.0f, 0.0f, // 1
          0.0f,  0.5f, 0.0f,  1.0f,  0.0f, 0.0f, // 2
-        -0.5f, -0.5f, 0.0f,  0.0f,  1.0f, 0.0f, // 3
-         0.5f, -0.5f, 0.0f,  0.0f,  1.0f, 0.0f}; // 4
+         0.5f,  0.0f, 0.0f,  0.0f,  1.0f, 0.0f, // 3
+        -0.5f,  0.0f, 0.0f,  0.0f,  1.0f, 0.0f, // 4
+        -0.5f, -0.5f, 0.0f,  0.0f,  1.0f, 0.0f, // 5
+         0.5f, -0.5f, 0.0f,  0.0f,  1.0f, 0.0f}; // 6
 
-    GLfloat strength = 0.5;
-    GLfloat color[3] = {0.1,1.0,1.0};
+    GLfloat strength = 1.0;
+    GLfloat color[3] = {1.0,1.0,1.0};
 
     glm::mat4 PVM(1.0f);
     //PVM = glm::rotate(PVM, 1.0f, glm::vec3(0,1,1));
@@ -108,10 +110,10 @@ void SimpleShapeApplication::frame()
      auto time_n = std::chrono::steady_clock::now();
      std::chrono::duration<double> elapsed = time_n - time;
      time = time_n;
-    std::cout<<(1.0f/elapsed.count())<<std::endl;
+    //std::cout<<(1.0f/elapsed.count())<<std::endl;
     
     static float rotation_angle = 0.0f;
-    rotation_angle += elapsed.count();
+    //rotation_angle += elapsed.count();
 
     auto [w, h] = frame_buffer_size();
 

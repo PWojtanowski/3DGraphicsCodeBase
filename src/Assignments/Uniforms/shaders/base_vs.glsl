@@ -12,11 +12,9 @@ layout(std140, binding=1) uniform Transformations {
 
 void main() {
     vec4 pos = a_vertex_position;
+    pos.xy *= scale.xy;
     pos.xy = rotation * pos.xy;
-    pos.x *= scale.x;
-    pos.y *= scale.y;
-    pos.x += translation.x;
-    pos.y += translation.y;
+    pos.xy += translation.xy;
     gl_Position = pos;
     vColor = a_vertex_color;
 }
