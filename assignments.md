@@ -32,3 +32,16 @@ OK ale animacja jest niepotrzeban
 ## CameraMovement 
 
 OK
+
+## Textures
+
+11.01.22 
+
+OK
+
+## Blue marble
+
+18.01.22
+
+OK
+
