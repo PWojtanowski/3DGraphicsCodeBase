@@ -15,6 +15,8 @@
 
 void SimpleShapeApplication::init()
 {
+    xe::ColorMaterial::init();
+    
     std::vector<GLushort> indices = {3,1,0,
                                     2,3,0,
                                     0,4,2,
@@ -86,7 +88,7 @@ void SimpleShapeApplication::init()
 //This functions is called every frame and does the actual rendering.
 void SimpleShapeApplication::frame()
 {
-    xe::ColorMaterial::init();
+    
     //  static auto time = std::chrono::steady_clock::now();
     //  auto time_n = std::chrono::steady_clock::now();
     //  std::chrono::duration<double> elapsed = time_n - time;

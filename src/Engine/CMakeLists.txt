@@ -7,4 +7,5 @@ add_library(engine
         Mesh.h Mesh.cpp
         Material.h Material.cpp
         mesh_loader.h mesh_loader.cpp
+        texture.h texture.cpp
         )

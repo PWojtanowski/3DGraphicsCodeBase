@@ -20,5 +20,5 @@ void main() {
         vFragColor = Kd*texture(map_Kd, vertex_texcoords);
         
     else
-        vFragColor = vec4(0.1f, vertex_texcoords, 0.1f);;
+        vFragColor = Kd;
 }
