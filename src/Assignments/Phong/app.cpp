@@ -43,6 +43,7 @@ void SimpleShapeApplication::init()
     
 
     xe::ColorMaterial::init();
+    xe::PhongMaterial::init();
 
     std::vector<GLushort> indices = {0,2,3,
                                     0,3,1,
@@ -70,8 +71,19 @@ void SimpleShapeApplication::init()
   
     glGenBuffers(1, &t_buffer_handle);
     OGL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, t_buffer_handle));
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), &PVM, GL_DYNAMIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4)  + 3*4*sizeof(GLfloat),
+        &PVM, GL_DYNAMIC_DRAW);
     glBindBufferBase(GL_UNIFORM_BUFFER,1,t_buffer_handle);
+
+
+    //GLint lightsize = 2 * 4 * sizeof(GLfloat) + 4 * sizeof(GLfloat); //3*16 = 48
+    //GLint initsize = 8 * sizeof(GLfloat); // 8 * 4  = 32
+
+    
+    glGenBuffers(1, &l_buffer_handle);
+    OGL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, l_buffer_handle));
+    glBufferData(GL_UNIFORM_BUFFER, 32 + 24*48, nullptr, GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_UNIFORM_BUFFER,2,l_buffer_handle);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -94,7 +106,7 @@ void SimpleShapeApplication::init()
     pyramid->load_indices(0, indices.size() * sizeof(GLfloat), indices.data());
     pyramid->add_submesh(0,18, material);
     
-    pyramid = xe::load_mesh_from_obj(std::string(ROOT_DIR) + "/Models/blue_marble.obj",
+    pyramid = xe::load_mesh_from_obj(std::string(ROOT_DIR) + "/Models/square.obj",
                                           std::string(ROOT_DIR) + "/Models");
     
     
@@ -118,7 +130,7 @@ void SimpleShapeApplication::init()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    
+    add_light( xe::PointLight(glm::vec3(0,0,4), glm::vec3(1,1,0), 2, 2));
 }
 
 //This functions is called every frame and does the actual rendering.
@@ -134,13 +146,33 @@ void SimpleShapeApplication::frame()
     // rotation_angle += elapsed.count();
 
     // auto [w, h] = frame_buffer_size();
-
     glm::mat4 model(1.0f);   
+    auto VM = camera_.view() * model;
+    auto R = glm::mat3(VM);
+    auto N = glm::mat3(glm::cross(R[1], R[2]), glm::cross(R[2], R[0]), glm::cross(R[0], R[1]));
+
+    
     //model = glm::rotate(model, rotation_angle, glm::vec3(1.0f,0.0f,1.0f));
     glm::mat4 trans = camera_.projection() * camera_.view() * model;
 
     glBindBuffer(GL_UNIFORM_BUFFER, t_buffer_handle);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &trans);
+    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), &VM);
+    glBufferSubData(GL_UNIFORM_BUFFER, 2* sizeof(glm::mat4), 3 * sizeof(GLfloat), &N[0]);
+    glBufferSubData(GL_UNIFORM_BUFFER, 2* sizeof(glm::mat4) + 4 * sizeof(GLfloat), 3 * sizeof(GLfloat), &N[1]);
+    glBufferSubData(GL_UNIFORM_BUFFER, 2* sizeof(glm::mat4) + 8 * sizeof(GLfloat), 3 * sizeof(GLfloat), &N[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    GLuint light_count = p_lights_.size();
+    //std::cout<<light_count<<std::endl;
+    glBindBuffer(GL_UNIFORM_BUFFER, l_buffer_handle);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::vec3), &ambient_);
+    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::vec3), sizeof(GLuint), &light_count);
+    for(size_t i =0; i<light_count; ++i){
+        xe::PointLight l = p_lights_[i];
+        l.position_in_vs = glm::vec3(VM * glm::vec4(l.position_in_ws,0.0));
+        glBufferSubData(GL_UNIFORM_BUFFER, 16 + i*48, 48 , (char*)&l + 16);
+    }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     for(auto &m: meshes_)

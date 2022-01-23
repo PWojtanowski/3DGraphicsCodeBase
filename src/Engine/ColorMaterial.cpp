@@ -4,7 +4,7 @@
 
 #include "glm/gtx/string_cast.hpp"
 
-#include "Material.h"
+#include "ColorMaterial.h"
 
 #include <iostream>
 
