@@ -45,3 +45,10 @@ OK
 
 OK
 
+## Phong
+
+
+10.02.2022 15:51:55
+
+use_map ma zawsze wartość 1, więc zawsze czytany jest kolor z tekstury. 
+Jeśli to się poprawi, to okazuje się, że jeśli nie uzywamy tesktry to wyświetla Pna sam kolor Kd bez oświetlenia?
