@@ -52,3 +52,10 @@ OK
 
 use_map ma zawsze wartość 1, więc zawsze czytany jest kolor z tekstury. 
 Jeśli to się poprawi, to okazuje się, że jeśli nie uzywamy tesktry to wyświetla Pna sam kolor Kd bez oświetlenia?
+
+
+2.03.2022 16:59:49 
+
+Niepotrzebnie kombinuje Pan coś z light radius. 
+Lightvector ma żly kierunek. 
+Źle Pan przekształca położenie światła do przestrzeni widoku. Ostatnia współrzedna powinna być 1.0 a nie 0.0. 
