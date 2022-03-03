@@ -12,6 +12,7 @@
 #include <chrono>
 
 #include "Application/utils.h"
+#include "Engine/ColorMaterial.h"
 
 void SimpleShapeApplication::init()
 {
