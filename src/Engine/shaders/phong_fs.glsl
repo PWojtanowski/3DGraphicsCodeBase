@@ -36,22 +36,22 @@ void main() {
 
     vec3 normal = normalize(vertex_normals_in_vs.xyz);
     vec3 result_difuse = vec3(0,0,0);
-    for(uint i =0; i<n_p_lights; ++i){
-        vec3 light_vec = vec3(vertex_coords_in_vs) - p_light[i].position_in_view_space;
-        float llen = length(light_vec);
-        vec3 diffuse =  (llen < p_light[i].radius)? p_light[i].color : vec3(0,0,0);
-        float d = dot(normalize(light_vec), normal);
-        result_difuse += d* diffuse;
-    }
 
-    vec4 ac = vec4(ambient, 1.0);
-    vec4 dc = vec4(result_difuse, 0.0); 
+    for(uint i =0; i<n_p_lights; ++i){
+        vec3 light_vec = p_light[i].position_in_view_space - vec3(vertex_coords_in_vs);
+        //float llen = length(light_vec);
+        //vec3 diffuse =  (llen < p_light[i].radius)? p_light[i].color : vec3(0,0,0);
+        float d = clamp(dot(normalize(light_vec), normal), 0.0, 1.0);
+        result_difuse += d * p_light[i].color;
+    }
+ 
+    vec4 _Ka = vec4(ambient, 1.0);
+    vec4 _Kd = vec4(result_difuse, 1.0); 
     
     if (use_map_Kd)
-        vFragColor = (ac+dc) *texture(map_Kd, vertex_texcoords);
-        
+        vFragColor = (_Ka+_Kd)*texture(map_Kd, vertex_texcoords);
     else
-        vFragColor = Kd;
+        vFragColor = (_Ka+_Kd)*Kd;
 
     //vFragColor.rgb = normal;
     //vFragColor = abs(vertex_coords_in_vs);

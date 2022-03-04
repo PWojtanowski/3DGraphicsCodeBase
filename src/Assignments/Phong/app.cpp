@@ -130,7 +130,8 @@ void SimpleShapeApplication::init()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    add_light( xe::PointLight(glm::vec3(0,0,4), glm::vec3(1,1,0), 2, 2));
+    add_light( xe::PointLight(glm::vec3(0,0,0.3), glm::vec3(1,1,0), 2, 2));
+    //add_light( xe::PointLight(glm::vec3(0,0,1), glm::vec3(0,0,1), 2, 2));
 }
 
 //This functions is called every frame and does the actual rendering.
@@ -170,7 +171,7 @@ void SimpleShapeApplication::frame()
     glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::vec3), sizeof(GLuint), &light_count);
     for(size_t i =0; i<light_count; ++i){
         xe::PointLight l = p_lights_[i];
-        l.position_in_vs = glm::vec3(VM * glm::vec4(l.position_in_ws,0.0));
+        l.position_in_vs = glm::vec3(VM * glm::vec4(l.position_in_ws, 1.0));
         glBufferSubData(GL_UNIFORM_BUFFER, 16 + i*48, 48 , (char*)&l + 16);
     }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
